@@ -5,11 +5,11 @@
 				.state('home', {
 					url: '/home',
 					controller: 'MainCtrl as main',
-					templateUrl: '/templates/home.html'
+					templateUrl: '/angularTemplates/home.html'
 			 })
 			 	.state('posts', {
 				 url: '/posts/{id}',
-				 templateUrl: '/templates/posts.html',
+				 templateUrl: '/angularTemplates/posts.html',
 				 controller: 'PostsCtrl as postctrl'
 			 });
 			 

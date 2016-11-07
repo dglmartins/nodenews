@@ -1,0 +1,33 @@
+<div class="page-header">
+	<h1>NodeNews</h1>
+</div>
+				
+				
+<div ng-repeat="post in main.postFactory.posts | orderBy: '-upvotes'">
+	<span class="glyphicon glyphicon-thumbs-up" ng-click="main.incrementUpvotes(post)"></span>
+	{{post.upvotes}}
+	<span style="font-size:20px; margin-left:10px;">
+		<a ng-show="post.link" target="_blank" href="{{post.link}}">
+			{{post.title}}
+		</a>
+		<span ng-hide="post.link">
+			{{post.title}}
+		</span>
+	</span>
+	<span>
+		<!--the $index below comes from the ng-repeat-->
+		<a href="#/posts/{{$index}}">Comments</a>
+	</span>
+</div>
+
+
+<form ng-submit="main.addPost()" style="margin-top:30px;">
+	<h3>Add a new post</h3>
+	<div class="form-group">
+		<input type="text" placeholder="Title" ng-model="title"/>
+	</div>
+	<div class="form-group">
+		<input type="text" placeholder="Link" ng-model="link"/>
+	</div>
+	<button type="submit" class="btn btn-primary">Post</button>
+</form>
