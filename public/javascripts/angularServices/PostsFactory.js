@@ -1,26 +1,42 @@
 (function()	{
-	function PostsFactory() {
+	function PostsFactory($http) {
 		var PostsFactory = {};
 		PostsFactory.posts = [];
+		
+		PostsFactory.getAll = function() {
+			return $http.get('/posts').success(function(data) {
+				angular.copy(data, PostsFactory.posts);	
+			});
+		};
+		
+		PostsFactory.getSinglePost = function(id) {
+			return $http.get('/posts/' + id).then(function(res) {
+				return res.data;
+			});
+		};
+		
+		PostsFactory.createPost = function(post) {
+			return $http.post('/posts', post).success(function(data) {
+				PostsFactory.posts.push(data);
+			});
+		};
 		
 		PostsFactory.addPost = function(scope){
 			if(!scope.title || scope.title === '') {
 				return;
 			}
 			
-			PostsFactory.posts.push({
+			PostsFactory.createPost({
 				title: scope.title,
 				link: scope.link,
-				upvotes: 0,
-					// add fake comment data to the factory
-				comments: [
-				{author: 'Joe', body: 'Cool post', upvotes: 2},
-				{author: 'Bob', body: 'Good post', upvotes: 5}
-				]
 			});
 			
 			scope.title = '';
 			scope.link = '';
+		};
+		
+		PostsFactory.createComment = function(id, comment) {
+			return $http.post('/posts/' + id + '/comments', comment);
 		};
 		
 		PostsFactory.addComment = function(scope, postId){
@@ -28,27 +44,40 @@
 			return;
 		}
 		
-			PostsFactory.posts[postId].comments.push({
-				author: 'user', 
+			PostsFactory.createComment(postId, {
 				body: scope.body, 
-				upvotes: 0
+				author: 'user'
+			}).success(function(comment) {
+				scope.post.comments.push(comment);	
 			});
-
 			scope.body = '';
 		};
 		
-		
+		PostsFactory.upvotePost = function(post) {
+			return $http.put('/posts/' + post._id + '/upvote').success(function(data) {
+				post.upvotes += 1;
+			});
+		}
 		
 		PostsFactory.incrementUpvotes = function(post){
-			post.upvotes += 1;
+			PostsFactory.upvotePost(post);
 		};
+		
+		
+		PostsFactory.upvoteComment = function(post, comment) {
+			return $http.put('/posts/' + post._id + '/comments/' + comment._id + '/upvote').success(function(data) {
+				comment.upvotes += 1;
+			});
+		};
+		
+		
 		return PostsFactory;
 		
 	};
 	
 	angular
 		.module('nodeNews')
-		.factory('PostsFactory', [PostsFactory]);
+		.factory('PostsFactory', ['$http', PostsFactory]);
 	
 	
 })();

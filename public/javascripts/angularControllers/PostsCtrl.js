@@ -1,19 +1,23 @@
 (function() {
-	function PostsCtrl($scope, $stateParams, PostsFactory) {
+	function PostsCtrl($scope, PostsFactory, post) {
 		
-		this.post = PostsFactory.posts[$stateParams.id];
+		$scope.post = post;
 		
 		this.addComment = function() {
-			PostsFactory.addComment($scope, $stateParams.id);
+			PostsFactory.addComment($scope, post._id);
 		};
 		
+		$scope.incrementUpvotes = function(comment){
+			PostsFactory.upvoteComment(post, comment);
+		};
+	
 	}
 	
 	
 	
 	angular
 		.module('nodeNews')
-		.controller('PostsCtrl', ['$scope', '$stateParams', 'PostsFactory', PostsCtrl]);
+		.controller('PostsCtrl', ['$scope', 'PostsFactory', 'post', PostsCtrl]);
 	
 	
 })();
